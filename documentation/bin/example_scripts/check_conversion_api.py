@@ -1,6 +1,6 @@
 import pathlib
 import pandas as pd
-from colorizer_data import convert_colorizer_data
+from tfe_data import convert_colorizer_data
 
 """
 To test, run the following commands from the root directory.

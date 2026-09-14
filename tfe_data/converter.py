@@ -15,14 +15,14 @@ import pandas as pd
 import numpy as np
 
 
-from colorizer_data.types import (
+from tfe_data.types import (
     BackdropMetadata,
     ColorizerMetadata,
     DataFileType,
     FeatureInfo,
     Frames3dMetadata,
 )
-from colorizer_data.utils import (
+from tfe_data.utils import (
     INITIAL_INDEX_COLUMN,
     _get_frame_count_from_3d_source,
     configure_logging,
@@ -34,7 +34,7 @@ from colorizer_data.utils import (
     sanitize_path_by_platform,
     scale_image,
 )
-from colorizer_data.writer import ColorizerDatasetWriter
+from tfe_data.writer import ColorizerDatasetWriter
 
 
 @dataclass
@@ -487,7 +487,7 @@ def convert_colorizer_data(
     Example:
         ```python
             import pandas as pd
-            from colorizer_data import convert_colorizer_data
+            from tfe_data import convert_colorizer_data
 
             # 1. Assuming CSV data has default columns "ID", "Track",
             #    "Frame", and "File Path":
@@ -505,7 +505,7 @@ def convert_colorizer_data(
             )
 
             # 3. You can also specify metadata for some or all features.
-            from colorizer_data import FeatureInfo, FeatureType
+            from tfe_data import FeatureInfo, FeatureType
             feature_info = {
                 "my_feature_column": FeatureInfo(
                     label="Height",
