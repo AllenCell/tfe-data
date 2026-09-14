@@ -488,15 +488,15 @@ def convert_tfe_data(
     Example:
         ```python
             import pandas as pd
-            from tfe_data import convert_colorizer_data
+            from tfe_data import convert_tfe_data
 
             # 1. Assuming CSV data has default columns "ID", "Track",
             #    "Frame", and "File Path":
             data = pd.read_csv("some/path/data.csv")
-            convert_colorizer_data(data, "dataset_dir/dataset_name")
+            convert_tfe_data(data, "dataset_dir/dataset_name")
 
             # 2. If not, you can specify the column names:
-            convert_colorizer_data(
+            convert_tfe_data(
                 data,
                 "dataset_dir/dataset_name",
                 object_id_column="my_id_column",
@@ -523,7 +523,7 @@ def convert_tfe_data(
                     categories=["Colony", "Edge", "Migratory"],
                 ),
             }
-            convert_colorizer_data(
+            convert_tfe_data(
                 data,
                 "dataset_dir/dataset_name",
                 feature_info=feature_info,

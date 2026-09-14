@@ -1,6 +1,6 @@
 import pathlib
 import pandas as pd
-from tfe_data import convert_colorizer_data
+from tfe_data import convert_tfe_data
 
 """
 To test, run the following commands from the root directory.
@@ -14,7 +14,7 @@ if __name__ == "__main__":
     source_dir = pathlib.Path("./documentation/getting_started_guide/raw_dataset")
     data = pd.read_csv(source_dir / "data.csv")
     output_dir = pathlib.Path("./documentation/getting_started_guide/processed_data")
-    convert_colorizer_data(
+    convert_tfe_data(
         data,
         output_dir,
         source_dir=source_dir,
