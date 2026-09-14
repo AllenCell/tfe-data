@@ -841,6 +841,6 @@ frame_paths = generate_frame_paths(num_frames, start_frame=starting_timepoint)
 writer.set_frame_paths(frame_paths)
 
 # Including starting frame number in the metadata
-metadata = ColorizerMetadata(start_frame_num=starting_timepoint)
+metadata = DatasetMetadata(start_frame_num=starting_timepoint)
 writer.write_manifest(metadata)
 ```

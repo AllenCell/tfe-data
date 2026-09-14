@@ -17,7 +17,7 @@ import numpy as np
 
 from tfe_data.types import (
     BackdropMetadata,
-    ColorizerMetadata,
+    DatasetMetadata,
     DataFileType,
     FeatureInfo,
     Frames3dMetadata,
@@ -392,7 +392,7 @@ def convert_colorizer_data(
     output_dir: Union[str, pathlib.Path],
     *,
     source_dir: Optional[Union[str, pathlib.Path]] = None,
-    metadata: Optional[ColorizerMetadata] = None,
+    metadata: Optional[DatasetMetadata] = None,
     object_id_column: str = "ID",  # DEPRECATED
     segmentation_id_column: str = None,
     times_column: str = "Frame",
@@ -427,9 +427,9 @@ def convert_colorizer_data(
             relative paths in the `data` DataFrame will be resolved relative to this directory.
             Absolute paths will not be affected by this value. If `None`, the current working
             directory (`.`) will be used.
-        metadata (ColorizerMetadata | None): Metadata to include in the dataset's manifest, such
+        metadata (DatasetMetadata | None): Metadata to include in the dataset's manifest, such
             as the dataset name, author, dataset description, frame resolution, and time units.
-            See `ColorizerMetadata` for more information. Note that some information will be
+            See `DatasetMetadata` for more information. Note that some information will be
             written automatically, such as a timestamp and revision number.
         object_id_column (str): DEPRECATED. The name of the column containing the segmentation ID
             of a given object in the frame or image data. Overridden by `segmentation_id_column`

@@ -11,7 +11,7 @@ from PIL import Image
 
 from tfe_data.types import (
     BackdropMetadata,
-    ColorizerMetadata,
+    DatasetMetadata,
     DatasetManifest,
     FeatureInfo,
     FeatureMetadata,
@@ -63,7 +63,7 @@ class ColorizerDatasetWriter:
     outpath: pathlib.Path
     default_dataset_name: str
     manifest: DatasetManifest
-    metadata: ColorizerMetadata
+    metadata: DatasetMetadata
     backdrops: Dict[str, BackdropMetadata]
     features: Dict[str, FeatureMetadata]
     scale: float
@@ -111,9 +111,9 @@ class ColorizerDatasetWriter:
         self.default_dataset_name = dataset
         if "metadata" not in self.manifest:
             # New default metadata
-            self.metadata = ColorizerMetadata()
+            self.metadata = DatasetMetadata()
         else:
-            self.metadata = ColorizerMetadata.from_dict(self.manifest["metadata"])
+            self.metadata = DatasetMetadata.from_dict(self.manifest["metadata"])
 
     def write_categorical_feature(
         self,
@@ -517,7 +517,7 @@ class ColorizerDatasetWriter:
     def write_manifest(
         self,
         num_frames: int = None,
-        metadata: ColorizerMetadata = None,
+        metadata: DatasetMetadata = None,
     ):
         """
         Writes the final manifest file for the dataset in the configured output directory.
@@ -526,7 +526,7 @@ class ColorizerDatasetWriter:
 
         Args:
             num_frames (int): DEPRECATED. Define to generate the expected paths for frame images.
-            metadata (ColorizerMetadata): Metadata to be written with the dataset. Leave fields blank to use existing default values.
+            metadata (DatasetMetadata): Metadata to be written with the dataset. Leave fields blank to use existing default values.
 
         Note that some metadata fields (like `last_modified`, `_writer_version`, `_revision`, and `date_created`) will
         be automatically updated. Add definitions for these fields in the `metadata` argument to override this behavior.

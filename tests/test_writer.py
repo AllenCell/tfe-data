@@ -9,7 +9,7 @@ import pyarrow.parquet as pq
 
 from tfe_data.types import (
     CURRENT_VERSION,
-    ColorizerMetadata,
+    DatasetMetadata,
     DatasetManifest,
     FeatureInfo,
 )
@@ -83,7 +83,7 @@ def test_metadata_uses_frame_dims_subfield(tmp_path):
         writer = ColorizerDatasetWriter(tmp_path, DEFAULT_DATASET_NAME)
         setup_dummy_writer_data(writer)
         writer.write_manifest(
-            metadata=ColorizerMetadata(
+            metadata=DatasetMetadata(
                 frame_width=width,
                 frame_height=height,
                 frame_units=units,
@@ -101,14 +101,14 @@ def test_metadata_uses_frame_dims_subfield(tmp_path):
         assert manifest["metadata"]["frameDims"]["height"] == height
         assert manifest["metadata"]["frameDims"]["units"] == units
 
-        # Expect ColorizerMetadata fields to not be written directly
+        # Expect DatasetMetadata fields to not be written directly
         assert "frame_width" not in manifest["metadata"].keys()
         assert "frame_height" not in manifest["metadata"].keys()
         assert "frame_units" not in manifest["metadata"].keys()
 
-        # Expect manifest structure can be parsed to ColorizerMetadata
+        # Expect manifest structure can be parsed to DatasetMetadata
         # with correct fields
-        metadata = ColorizerMetadata.from_dict(manifest["metadata"])
+        metadata = DatasetMetadata.from_dict(manifest["metadata"])
 
         assert metadata.frame_width == width
         assert metadata.frame_height == height
@@ -143,7 +143,7 @@ def test_writer_handles_renamed_fields(existing_manifest):
 
     writer, tmp_path, manifest_path = existing_manifest
     writer.write_manifest(
-        metadata=ColorizerMetadata(
+        metadata=DatasetMetadata(
             start_time_sec=1.0, start_frame_num=2.0, frame_duration_sec=3.0
         )
     )
@@ -151,7 +151,7 @@ def test_writer_handles_renamed_fields(existing_manifest):
     with open(manifest_path, "r") as f:
         manifest: DatasetManifest = json.load(f)
         metadata_dict = manifest["metadata"]
-        metadata = ColorizerMetadata.from_dict(metadata_dict)
+        metadata = DatasetMetadata.from_dict(metadata_dict)
 
         # Expect fields to be written out in the dictionary
         assert metadata_dict["startingTimeSeconds"] == 1.0
@@ -167,9 +167,7 @@ def test_writer_handles_renamed_fields(existing_manifest):
 def test_writer_keeps_manifest_metadata(existing_manifest):
     # Should keep name, author, time of creation, description
     writer, tmp_path, manifest_path = existing_manifest
-    writer.write_manifest(
-        metadata=ColorizerMetadata(start_time_sec=5, start_frame_num=6)
-    )
+    writer.write_manifest(metadata=DatasetMetadata(start_time_sec=5, start_frame_num=6))
 
     with open(manifest_path, "r") as f:
         manifest: DatasetManifest = json.load(f)
@@ -193,7 +191,7 @@ def test_writer_overrides_metadata_fields(existing_manifest):
 
     writer, tmp_path, manifest_path = existing_manifest
     writer.write_manifest(
-        metadata=ColorizerMetadata(
+        metadata=DatasetMetadata(
             name="new name",
             description="new description",
             author="geoff",
@@ -228,7 +226,7 @@ def test_writer_updates_fields_when_metadata_is_missing(blank_manifest):
 
     with open(manifest_path, "r") as f:
         manifest: DatasetManifest = json.load(f)
-        metadata: ColorizerMetadata = ColorizerMetadata.from_dict(manifest["metadata"])
+        metadata: DatasetMetadata = DatasetMetadata.from_dict(manifest["metadata"])
 
         assert metadata.name == DEFAULT_DATASET_NAME
         assert metadata.date_created is not None
