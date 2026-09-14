@@ -5,6 +5,7 @@ import os
 import pathlib
 import shutil
 from typing import Dict, List, Optional, Union
+from warnings import deprecated
 
 import numpy as np
 from PIL import Image
@@ -41,9 +42,9 @@ from tfe_data.utils import (
 MAX_SEG_ID_GAP = 10
 
 
-class ColorizerDatasetWriter:
+class TfeDatasetWriter:
     """
-    Writes provided data as Colorizer-compatible dataset files to the configured output directory.
+    Writes provided data as TFE-compatible dataset files to the configured output directory.
 
     Args:
       output_dir (`str | pathlib.Path`): The output directory to write the dataset to.
@@ -234,7 +235,7 @@ class ColorizerDatasetWriter:
                 fmin = np.nanmin(filtered_data)
             except ValueError:
                 raise ValueError(
-                    "ColorizerDatasetWriter.write_feature: Feature '{}' had no finite, non-outlier values when calculating min/max bounds.".format(
+                    "TfeDatasetWriter.write_feature: Feature '{}' had no finite, non-outlier values when calculating min/max bounds.".format(
                         info.get_name()
                     )
                     + " Provide a min and max property in FeatureInfo to override automatic bounds calculation."
@@ -245,7 +246,7 @@ class ColorizerDatasetWriter:
                 fmax = np.nanmax(filtered_data)
             except ValueError:
                 raise ValueError(
-                    "ColorizerDatasetWriter.write_feature: Feature '{}' has no finite, non-outlier values when calculating min/max bounds.".format(
+                    "TfeDatasetWriter.write_feature: Feature '{}' has no finite, non-outlier values when calculating min/max bounds.".format(
                         info.get_name()
                     )
                     + " Provide a min and max property in FeatureInfo to override automatic bounds calculation."
@@ -507,7 +508,7 @@ class ColorizerDatasetWriter:
     def set_3d_frame_data(self, data: Frames3dMetadata) -> None:
         if data.total_frames is None:
             logging.info(
-                "ColorizerDatasetWriter: The `total_frames` property of the Frames3dMetadata object is `None`. Will attempt to infer the number of frames from the provided data."
+                "TfeDatasetWriter: The `total_frames` property of the Frames3dMetadata object is `None`. Will attempt to infer the number of frames from the provided data."
             )
             data.total_frames = _get_frame_count_from_3d_source(data.source)
         self.manifest["frames3d"] = data.to_dict()
@@ -536,7 +537,7 @@ class ColorizerDatasetWriter:
 
         if num_frames is not None and "frames" not in self.manifest:
             logging.warning(
-                "ColorizerDatasetWriter: The argument `num_frames` on `write_manifest` is deprecated and will be removed in the future! Please call `set_frame_paths(generate_frame_paths(num_frames))` instead."
+                "TfeDatasetWriter: The argument `num_frames` on `write_manifest` is deprecated and will be removed in the future! Please call `set_frame_paths(generate_frame_paths(num_frames))` instead."
             )
             self.set_frame_paths(generate_frame_paths(num_frames))
 
@@ -722,3 +723,8 @@ class ColorizerDatasetWriter:
                     check_file_source(
                         f"3D frames backdrop {i} source", backdrop_source, self.outpath
                     )
+
+
+@deprecated("ColorizerDatasetWriter is deprecated, use TfeDatasetWriter instead.")
+class ColorizerDatasetWriter(TfeDatasetWriter):
+    pass

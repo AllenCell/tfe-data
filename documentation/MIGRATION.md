@@ -19,3 +19,4 @@ tfe_data @ git+https://github.com/AllenCell/tfe-data.git@v2.0.0
    version.
    - Replace `convert_colorizer_data()` with `convert_tfe_data()`.
    - Replace `ColorizerMetadata` with `DatasetMetadata`.
+   - Replace `ColorizerDatasetWriter` with `TfeDatasetWriter`.
