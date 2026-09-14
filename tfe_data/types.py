@@ -4,6 +4,7 @@ from dataclasses_json import LetterCase, DataClassJsonMixin, config
 from dataclasses_json.core import _decode_dataclass
 from enum import Enum
 from typing import Dict, List, Optional, Type, TypeVar, TypedDict, Union
+from typing_extensions import deprecated
 
 Json = Union[dict, str, int, float, bool, None]
 
@@ -182,10 +183,11 @@ class Frames3dMetadata(DataClassJsonMixin):
 
 
 @dataclass
-class ColorizerMetadata(DataClassJsonMixin):
+class DatasetMetadata(DataClassJsonMixin):
     """
-    Data class representation of metadata for a Colorizer dataset.
-    Can be converted to and from camelCase JSON format; see https://pypi.org/project/dataclasses-json/.
+    Data class representation of metadata for a TFE dataset. Can be
+    converted to and from camelCase JSON format; see
+    https://pypi.org/project/dataclasses-json/.
     """
 
     dataclass_json_config = config(letter_case=LetterCase.CAMEL, undefined=None)[
@@ -255,12 +257,10 @@ class ColorizerMetadata(DataClassJsonMixin):
         infer_missing=True,
     ) -> A:
         # Hacky. This is what DataClassJsonMixin.from_dict() calls internally, passing in the
-        # inferred class. In this case, we want to explicitly pass in this class (ColorizerMetadata)
+        # inferred class. In this case, we want to explicitly pass in this class (DatasetMetadata)
         # and use the parent behavior, but we can't call DataClassJsonMixin.from_dict() directly
-        # because it is unaware of ColorizerMetadata's dataclass fields.
-        metadata: ColorizerMetadata = _decode_dataclass(
-            ColorizerMetadata, kvs, infer_missing
-        )
+        # because it is unaware of DatasetMetadata's dataclass fields.
+        metadata = _decode_dataclass(cls, kvs, infer_missing)
 
         if "frameDims" in kvs.keys() and isinstance(kvs["frameDims"], dict):
             if "width" in kvs["frameDims"].keys():
@@ -281,6 +281,14 @@ class ColorizerMetadata(DataClassJsonMixin):
         return metadata
 
 
+@deprecated(
+    "ColorizerMetadata is deprecated and will be removed in the next major release. Please use DatasetMetadata instead."
+)
+@dataclass
+class ColorizerMetadata(DatasetMetadata):
+    pass
+
+
 class DatasetManifest(TypedDict):
     features: List[FeatureMetadata]
     outliers: str
@@ -292,7 +300,7 @@ class DatasetManifest(TypedDict):
     # snake_case, but JSON convention is camelCase.
     segIds: str
     bounds: str
-    metadata: ColorizerMetadata
+    metadata: DatasetMetadata
     frames: List[str]
     backdrops: List[BackdropMetadata]
     frames3d: Optional[Frames3dMetadata]
@@ -301,7 +309,7 @@ class DatasetManifest(TypedDict):
 @dataclass
 class CollectionMetadata(DataClassJsonMixin):
     """
-    Data class representation of metadata for a Colorizer collection file.
+    Data class representation of metadata for a TFE collection file.
     Can be converted to and from camelCase JSON format; see https://pypi.org/project/dataclasses-json/.
     """
 

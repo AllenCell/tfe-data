@@ -32,7 +32,7 @@ into the correct format for the Timelapse Feature Explorer.
 ```python
 import pandas as pd
 from io import StringIO
-from tfe_data import convert_colorizer_data
+from tfe_data import convert_tfe_data
 
 from pathlib import Path
 
@@ -49,7 +49,7 @@ source_dir = Path("some/source/directory")
 data: pd.DataFrame = pd.read_csv(StringIO(csv))
 output_dir = Path("some/directory/my-dataset")
 
-convert_colorizer_data(
+convert_tfe_data(
     data,
     output_dir,
     source_dir=source_dir,

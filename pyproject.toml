@@ -34,8 +34,9 @@ dependencies = [
     "pandas",
     "pillow",
     "pyarrow",
-    "scikit-image",
     "requests",
+    "scikit-image",
+    "typing-extensions",
 ]
 
 [project.optional-dependencies]
