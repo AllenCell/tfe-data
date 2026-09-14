@@ -629,7 +629,7 @@ def convert_tfe_data(
 
 
 @deprecated(
-    "Will be removed in the next major release. Please use convert_tfe_data instead."
+    "convert_colorizer_data is deprecated and will be removed in the next major release. Please use convert_tfe_data instead."
 )
 @wraps(convert_tfe_data)
 def convert_colorizer_data(*args, **kwargs):
