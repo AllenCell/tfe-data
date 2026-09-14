@@ -387,7 +387,7 @@ def test_rewrites_images_when_object_count_changes(existing_dataset):
     frame_0_time = os.path.getmtime(existing_dataset / "frame_0.png")
     frame_1_time = os.path.getmtime(existing_dataset / "frame_1.png")
 
-    csv_content = f"{sample_csv_headers}\n{sample_csv_data}\n4,3,1,70,80,0.9,4,D,1,./tfe_data/tests/assets/test_csv/frame_1.tiff"
+    csv_content = f"{sample_csv_headers}\n{sample_csv_data}\n4,3,1,70,80,0.9,4,D,1,f{asset_path / 'test_csv/frame_1.tiff'}"
     csv_data = pd.read_csv(StringIO(csv_content))
     convert_colorizer_data(csv_data, existing_dataset, force_frame_generation=False)
 
