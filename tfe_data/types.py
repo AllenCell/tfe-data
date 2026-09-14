@@ -260,9 +260,7 @@ class DatasetMetadata(DataClassJsonMixin):
         # inferred class. In this case, we want to explicitly pass in this class (DatasetMetadata)
         # and use the parent behavior, but we can't call DataClassJsonMixin.from_dict() directly
         # because it is unaware of DatasetMetadata's dataclass fields.
-        metadata: DatasetMetadata = _decode_dataclass(
-            DatasetMetadata, kvs, infer_missing
-        )
+        metadata = _decode_dataclass(cls, kvs, infer_missing)
 
         if "frameDims" in kvs.keys() and isinstance(kvs["frameDims"], dict):
             if "width" in kvs["frameDims"].keys():
