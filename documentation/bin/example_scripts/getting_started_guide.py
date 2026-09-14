@@ -31,7 +31,7 @@ from tfe_data import (
     convert_colorizer_data,
     FeatureInfo,
     FeatureType,
-    ColorizerMetadata,
+    DatasetMetadata,
     CollectionMetadata,
     update_collection,
 )
@@ -90,7 +90,7 @@ def main():
         dataset_out_dir.mkdir(parents=True, exist_ok=True)
 
         # Dataset metadata
-        metadata = ColorizerMetadata(
+        metadata = DatasetMetadata(
             name="Example dataset {}".format(i + 1),
             description="An example dataset for the Timelapse Feature Explorer.",
             author="Author name et al.",
