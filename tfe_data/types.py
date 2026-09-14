@@ -283,7 +283,9 @@ class DatasetMetadata(DataClassJsonMixin):
         return metadata
 
 
-@deprecated(reason="Use DatasetMetadata instead.")
+@deprecated(
+    "ColorizerMetadata is deprecated and will be removed in the next major release. Please use DatasetMetadata instead."
+)
 @dataclass
 class ColorizerMetadata(DatasetMetadata):
     pass

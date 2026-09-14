@@ -725,6 +725,8 @@ class TfeDatasetWriter:
                     )
 
 
-@deprecated("ColorizerDatasetWriter is deprecated, use TfeDatasetWriter instead.")
+@deprecated(
+    "ColorizerDatasetWriter is deprecated and will be removed in the next major release. Please use TfeDatasetWriter instead."
+)
 class ColorizerDatasetWriter(TfeDatasetWriter):
     pass
