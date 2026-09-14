@@ -4,7 +4,7 @@ from dataclasses_json import LetterCase, DataClassJsonMixin, config
 from dataclasses_json.core import _decode_dataclass
 from enum import Enum
 from typing import Dict, List, Optional, Type, TypeVar, TypedDict, Union
-from warnings import deprecated
+from typing_extensions import deprecated
 
 Json = Union[dict, str, int, float, bool, None]
 

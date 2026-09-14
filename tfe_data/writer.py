@@ -5,7 +5,7 @@ import os
 import pathlib
 import shutil
 from typing import Dict, List, Optional, Union
-from warnings import deprecated
+from typing_extensions import deprecated
 
 import numpy as np
 from PIL import Image
