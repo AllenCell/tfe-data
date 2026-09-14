@@ -4,7 +4,7 @@ Last release: v1.7.1
 
 **NOTE:** If you are looking to create a dataset, follow our [getting started guide (`GETTING_STARTED.ipynb`)](./getting_started_guide/GETTING_STARTED.ipynb), and see the [readme (`README.md`)](../README.md) for more details on how to install this package.
 
-This document describes the dataset format used by Timelapse Feature Explorer. Utilities in `colorizer_data` automatically write datasets in this format, but this document exists as a technical resource users who want to create or edit their own datasets manually.
+This document describes the dataset format used by Timelapse Feature Explorer. Utilities in `tfe_data` automatically write datasets in this format, but this document exists as a technical resource users who want to create or edit their own datasets manually.
 
 ## 1. Terms
 

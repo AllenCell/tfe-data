@@ -8,9 +8,9 @@ import pandas as pd
 import pytest
 from typing import Dict, List, Union
 
-from colorizer_data import convert_colorizer_data
-from colorizer_data.types import DataFileType, FeatureMetadata, Frames3dMetadata
-from colorizer_data.utils import read_data_array_file
+from tfe_data import convert_colorizer_data
+from tfe_data.types import DataFileType, FeatureMetadata, Frames3dMetadata
+from tfe_data.utils import read_data_array_file
 
 asset_path = pathlib.Path(__file__).parent / "assets"
 

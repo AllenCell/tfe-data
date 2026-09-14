@@ -3,15 +3,15 @@ requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [tools.setuptools]
-packages = ["colorizer_data"]
+packages = ["tfe_data"]
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["colorizer_data"]
+include = ["tfe_data"]
 namespaces = false
 
 [project]
-name = "colorizer_data"
+name = "tfe_data"
 version = "1.7.1"
 authors = [
     {name = "", email = "danielt@alleninstitute.org"},
@@ -50,8 +50,8 @@ Homepage = "https://github.com/allen-cell-animated/colorizer-data"
 Issues = "https://github.com/allen-cell-animated/colorizer-data/issues"
 
 [project.scripts]
-tfe-open = "colorizer_data.bin.tfe_open:main"
-tfe_open = "colorizer_data.bin.tfe_open:main"
+tfe-open = "tfe_data.bin.tfe_open:main"
+tfe_open = "tfe_data.bin.tfe_open:main"
 
 # ... other project metadata fields as specified in:
 #     https://packaging.python.org/en/latest/specifications/declaring-project-metadata/

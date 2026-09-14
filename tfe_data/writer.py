@@ -9,7 +9,7 @@ from typing import Dict, List, Optional, Union
 import numpy as np
 from PIL import Image
 
-from colorizer_data.types import (
+from tfe_data.types import (
     BackdropMetadata,
     ColorizerMetadata,
     DatasetManifest,
@@ -18,7 +18,7 @@ from colorizer_data.types import (
     FeatureType,
     Frames3dMetadata,
 )
-from colorizer_data.utils import (
+from tfe_data.utils import (
     DEFAULT_FRAME_PREFIX,
     DEFAULT_FRAME_SUFFIX,
     _get_frame_count_from_3d_source,
