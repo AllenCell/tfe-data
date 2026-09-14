@@ -1,3 +1,4 @@
+from functools import wraps
 import logging
 import math
 import multiprocessing
@@ -6,6 +7,7 @@ import pathlib
 import shutil
 import time
 from typing import Dict, List, Optional, Union
+from warnings import deprecated
 
 from bioio import BioImage
 from dataclasses import dataclass
@@ -13,7 +15,6 @@ from pandas import DataFrame
 from pandas.core.groupby.generic import DataFrameGroupBy
 import pandas as pd
 import numpy as np
-
 
 from tfe_data.types import (
     BackdropMetadata,
@@ -387,7 +388,7 @@ def _handle_3d_frames(
     writer.set_3d_frame_data(config.frames_3d)
 
 
-def convert_colorizer_data(
+def convert_tfe_data(
     data: DataFrame,
     output_dir: Union[str, pathlib.Path],
     *,
@@ -625,3 +626,11 @@ def convert_colorizer_data(
     finally:
         # Restore working directory
         os.chdir(original_cwd)
+
+
+@deprecated(
+    "Will be removed in the next major release. Please use convert_tfe_data instead."
+)
+@wraps(convert_tfe_data)
+def convert_colorizer_data(*args, **kwargs):
+    return convert_tfe_data(*args, **kwargs)
