@@ -28,7 +28,7 @@ tfe-open processed_dataset/collection.json
 from pathlib import Path
 
 from tfe_data import (
-    convert_colorizer_data,
+    convert_tfe_data,
     FeatureInfo,
     FeatureType,
     DatasetMetadata,
@@ -107,7 +107,7 @@ def main():
 
         # Convert the dataset
         data: pd.DataFrame = pd.read_csv(dataset_src_dir / "data.csv")
-        convert_colorizer_data(
+        convert_tfe_data(
             data,
             dataset_out_dir,
             source_dir=dataset_src_dir,

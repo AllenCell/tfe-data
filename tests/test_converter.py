@@ -8,7 +8,7 @@ import pandas as pd
 import pytest
 from typing import Dict, List, Union
 
-from tfe_data import convert_colorizer_data
+from tfe_data import convert_tfe_data
 from tfe_data.types import DataFileType, FeatureMetadata, Frames3dMetadata
 from tfe_data.utils import read_data_array_file
 
@@ -44,7 +44,7 @@ def existing_dataset(tmp_path_factory) -> pathlib.Path:
     tmp_path = tmp_path_factory.mktemp("dataset")
     csv_content = f"{sample_csv_headers}\n{sample_csv_data}"
     csv_data = pd.read_csv(StringIO(csv_content))
-    convert_colorizer_data(
+    convert_tfe_data(
         csv_data, tmp_path, output_format=DataFileType.JSON, image_column="File Path"
     )
     return tmp_path
@@ -144,16 +144,14 @@ def validate_default_dataset(
 def test_handles_simple_csv(tmp_path):
     csv_content = f"{sample_csv_headers}\n{sample_csv_data}"
     csv_data = pd.read_csv(StringIO(csv_content))
-    convert_colorizer_data(
-        csv_data, tmp_path / "dataset", output_format=DataFileType.JSON
-    )
+    convert_tfe_data(csv_data, tmp_path / "dataset", output_format=DataFileType.JSON)
     validate_default_dataset(tmp_path / "dataset")
 
 
 def test_handles_renamed_columns(tmp_path):
     csv_content = f"{sample_csv_headers_alternate}\n{sample_csv_data}"
     csv_data = pd.read_csv(StringIO(csv_content))
-    convert_colorizer_data(
+    convert_tfe_data(
         csv_data,
         tmp_path / "dataset",
         object_id_column="object_id",
@@ -173,7 +171,7 @@ def test_handles_renamed_columns(tmp_path):
 def test_handles_default_csv_parquet(tmp_path):
     csv_content = f"{sample_csv_headers}\n{sample_csv_data}"
     csv_data = pd.read_csv(StringIO(csv_content))
-    convert_colorizer_data(
+    convert_tfe_data(
         csv_data,
         tmp_path / "dataset",
         output_format=DataFileType.PARQUET,
@@ -190,7 +188,7 @@ def test_fails_if_no_features_given(tmp_path):
         ["Continuous Feature", "Discrete Feature", "Categorical Feature"], axis=1
     )
     with pytest.raises(Exception):
-        convert_colorizer_data(csv_data, tmp_path)
+        convert_tfe_data(csv_data, tmp_path)
 
 
 def test_fails_if_no_objects_exist(tmp_path):
@@ -198,14 +196,14 @@ def test_fails_if_no_objects_exist(tmp_path):
     csv_data = pd.read_csv(StringIO(csv_content))
 
     with pytest.raises(Exception):
-        convert_colorizer_data(csv_data, tmp_path)
+        convert_tfe_data(csv_data, tmp_path)
 
 
 def test_handles_missing_centroid_and_outlier_columns(tmp_path):
     csv_content = f"{sample_csv_headers}\n{sample_csv_data}"
     csv_data = pd.read_csv(StringIO(csv_content))
     csv_data = csv_data.drop(["Centroid X", "Centroid Y", "Outlier"], axis=1)
-    convert_colorizer_data(csv_data, tmp_path, output_format=DataFileType.JSON)
+    convert_tfe_data(csv_data, tmp_path, output_format=DataFileType.JSON)
 
     # Outliers and centroids should not be written
     assert not os.path.exists(tmp_path / "outliers.json")
@@ -223,7 +221,7 @@ def test_throws_error_if_all_values_are_outliers(tmp_path):
     csv_data = pd.read_csv(StringIO(csv_content))
     csv_data["Outlier"] = 1
     with pytest.raises(Exception):
-        convert_colorizer_data(csv_data, tmp_path)
+        convert_tfe_data(csv_data, tmp_path)
 
 
 def test_throws_error_if_times_column_is_missing(tmp_path):
@@ -231,14 +229,14 @@ def test_throws_error_if_times_column_is_missing(tmp_path):
     csv_data = pd.read_csv(StringIO(csv_content))
     csv_data = csv_data.drop(["Frame"], axis=1)
     with pytest.raises(Exception):
-        convert_colorizer_data(csv_data, tmp_path)
+        convert_tfe_data(csv_data, tmp_path)
 
 
 def test_uses_id_as_track_if_track_is_missing(tmp_path):
     csv_content = f"{sample_csv_headers}\n{sample_csv_data}"
     csv_data = pd.read_csv(StringIO(csv_content))
     csv_data = csv_data.drop(["Track"], axis=1)
-    convert_colorizer_data(csv_data, tmp_path, output_format=DataFileType.JSON)
+    convert_tfe_data(csv_data, tmp_path, output_format=DataFileType.JSON)
 
     manifest = {}
     with open(tmp_path / "manifest.json", "r") as f:
@@ -259,14 +257,14 @@ def test_uses_source_dir_to_evaluate_relative_paths(tmp_path):
 
     # Check that conversion fails if no source directory is provided
     with pytest.raises(Exception):
-        convert_colorizer_data(
+        convert_tfe_data(
             data,
             tmp_path,
         )
 
     # Current working directory is tmp_path, but all the assets are in
     # the asset_path directory.
-    convert_colorizer_data(
+    convert_tfe_data(
         data,
         tmp_path,
         source_dir=asset_path,
@@ -278,7 +276,7 @@ def test_uses_source_dir_to_evaluate_relative_paths(tmp_path):
 
 def test_uses_default_segmentation_ids(tmp_path):
     data = pd.read_csv(StringIO(f"{sample_csv_headers}\n{sample_csv_data}"))
-    convert_colorizer_data(
+    convert_tfe_data(
         data,
         tmp_path,
         output_format=DataFileType.JSON,
@@ -308,7 +306,7 @@ def test_writes_3d_centroids(tmp_path):
     csv_data = pd.read_csv(StringIO(csv_content))
 
     dataset_dir = tmp_path / "dataset"
-    convert_colorizer_data(
+    convert_tfe_data(
         csv_data, dataset_dir, output_format=DataFileType.JSON, image_column="File Path"
     )
     # Validate that centroids are written correctly
@@ -334,7 +332,7 @@ def test_does_not_rewrite_existing_frames(existing_dataset):
 
     csv_content = f"{sample_csv_headers}\n{sample_csv_data}"
     csv_data = pd.read_csv(StringIO(csv_content))
-    convert_colorizer_data(csv_data, existing_dataset, force_frame_generation=False)
+    convert_tfe_data(csv_data, existing_dataset, force_frame_generation=False)
 
     # Frames + bbox data should not be modified
     assert os.path.getmtime(existing_dataset / "frame_0.png") == frame_0_time
@@ -357,7 +355,7 @@ def test_detects_missing_frames(existing_dataset):
 
     csv_content = f"{sample_csv_headers}\n{sample_csv_data}"
     csv_data = pd.read_csv(StringIO(csv_content))
-    convert_colorizer_data(csv_data, existing_dataset, force_frame_generation=False)
+    convert_tfe_data(csv_data, existing_dataset, force_frame_generation=False)
 
     # Frames should be regenerated
     assert os.path.exists(existing_dataset / "frame_0.png")
@@ -375,7 +373,7 @@ def test_force_image_generation_flag_works(existing_dataset):
 
     csv_content = f"{sample_csv_headers}\n{sample_csv_data}"
     csv_data = pd.read_csv(StringIO(csv_content))
-    convert_colorizer_data(csv_data, existing_dataset, force_frame_generation=True)
+    convert_tfe_data(csv_data, existing_dataset, force_frame_generation=True)
 
     # Frame 0 and 1 should both have newer write times
     assert os.path.getmtime(existing_dataset / "frame_0.png") > frame_0_time
@@ -389,7 +387,7 @@ def test_rewrites_images_when_object_count_changes(existing_dataset):
 
     csv_content = f"{sample_csv_headers}\n{sample_csv_data}\n4,3,1,70,80,0.9,4,D,1,f{asset_path / 'test_csv/frame_1.tiff'}"
     csv_data = pd.read_csv(StringIO(csv_content))
-    convert_colorizer_data(csv_data, existing_dataset, force_frame_generation=False)
+    convert_tfe_data(csv_data, existing_dataset, force_frame_generation=False)
 
     # Frame 0 and 1 should both have newer write times
     assert os.path.getmtime(existing_dataset / "frame_0.png") > frame_0_time
@@ -406,7 +404,7 @@ def test_regenerates_frames_if_missing_times_file(existing_dataset):
 
     csv_content = f"{sample_csv_headers}\n{sample_csv_data}"
     csv_data = pd.read_csv(StringIO(csv_content))
-    convert_colorizer_data(csv_data, existing_dataset, force_frame_generation=False)
+    convert_tfe_data(csv_data, existing_dataset, force_frame_generation=False)
 
     # Frame 0 and 1 should both have newer write times
     assert os.path.getmtime(existing_dataset / "frame_0.png") > frame_0_time
@@ -420,7 +418,7 @@ def test_skips_frame_generation_if_no_image_column(existing_dataset):
 
     csv_content = f"{sample_csv_headers}\n{sample_csv_data}"
     csv_data = pd.read_csv(StringIO(csv_content))
-    convert_colorizer_data(
+    convert_tfe_data(
         csv_data, existing_dataset, force_frame_generation=False, image_column=None
     )
 
@@ -436,7 +434,7 @@ def test_writes_3d_data(tmp_path):
     csv_content = f"{sample_csv_headers}\n{sample_csv_data}"
     csv_data = pd.read_csv(StringIO(csv_content))
 
-    convert_colorizer_data(
+    convert_tfe_data(
         csv_data,
         tmp_path,
         frames_3d=Frames3dMetadata(
@@ -477,7 +475,7 @@ class TestBackdropWriting:
             StringIO(self.backdrop_headers + "\n" + self.backdrop_csv_data)
         )
 
-        convert_colorizer_data(
+        convert_tfe_data(
             csv_data,
             tmp_path,
             backdrop_column_names=["Backdrop Image 1", "Backdrop Image 2"],
@@ -537,7 +535,7 @@ class TestBackdropWriting:
         csv_data = pd.read_csv(
             StringIO(self.backdrop_headers + "\n" + local_backdrop_csv_data)
         )
-        convert_colorizer_data(
+        convert_tfe_data(
             csv_data,
             tmp_path,
             backdrop_column_names=["Backdrop Image 1", "Backdrop Image 2"],
@@ -593,7 +591,7 @@ class TestBackdropWriting:
                 "key": "new_backdrop_key",
             }
         }
-        convert_colorizer_data(
+        convert_tfe_data(
             csv_data,
             tmp_path,
             backdrop_column_names=["Backdrop Image 1", "Backdrop Image 2"],
@@ -641,7 +639,7 @@ class TestBackdropWriting:
                 ]
             }
         }
-        convert_colorizer_data(
+        convert_tfe_data(
             csv_data,
             tmp_path,
             backdrop_column_names=["Backdrop Image 1", "Backdrop Image 2"],
@@ -690,7 +688,7 @@ class TestBackdropWriting:
             "A backdrop": backdrop_info_1,
             "Some other backdrop": backdrop_info_2,
         }
-        convert_colorizer_data(
+        convert_tfe_data(
             csv_data,
             tmp_path,
             backdrop_info=backdrop_info,
@@ -739,7 +737,7 @@ class TestBackdropWriting:
             }
         }
         with pytest.raises(Exception):
-            convert_colorizer_data(
+            convert_tfe_data(
                 csv_data,
                 tmp_path,
                 backdrop_info=backdrop_info,
@@ -757,7 +755,7 @@ class TestBackdropWriting:
                 ],
             }
         }
-        convert_colorizer_data(
+        convert_tfe_data(
             csv_data,
             tmp_path,
             backdrop_info=backdrop_info,
@@ -778,7 +776,7 @@ class TestBackdropWriting:
 
     def test_handles_none_backdrop(self, tmp_path):
         csv_data = pd.read_csv(StringIO(sample_csv_headers + "\n" + sample_csv_data))
-        convert_colorizer_data(
+        convert_tfe_data(
             csv_data,
             tmp_path,
             backdrop_column_names=["Nonexistent Backdrop"],
