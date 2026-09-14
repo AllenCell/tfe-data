@@ -7,7 +7,7 @@ import pathlib
 import shutil
 import time
 from typing import Dict, List, Optional, Union
-from warnings import deprecated
+from typing_extensions import deprecated
 
 from bioio import BioImage
 from dataclasses import dataclass
