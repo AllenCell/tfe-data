@@ -13,7 +13,7 @@ from tfe_data.types import (
     DatasetManifest,
     FeatureInfo,
 )
-from tfe_data.writer import ColorizerDatasetWriter
+from tfe_data.writer import TfeDatasetWriter
 
 DEFAULT_DATASET_NAME = "dataset"
 
@@ -42,7 +42,7 @@ BLANK_MANIFEST_CONTENT: DatasetManifest = {
 }
 
 
-def setup_dummy_writer_data(writer: ColorizerDatasetWriter):
+def setup_dummy_writer_data(writer: TfeDatasetWriter):
     writer.write_data(times=np.ndarray([0]), write_json=True)
     writer.set_frame_paths([""])
 
@@ -53,18 +53,18 @@ def setup_manifest_and_writer(path, content):
     manifest_path = path / DEFAULT_DATASET_NAME / "manifest.json"
     with open(manifest_path, "w") as f:
         json.dump(content, f, indent=2)
-    writer = ColorizerDatasetWriter(path, DEFAULT_DATASET_NAME)
+    writer = TfeDatasetWriter(path, DEFAULT_DATASET_NAME)
     setup_dummy_writer_data(writer)
     return writer, path, manifest_path
 
 
 @pytest.fixture
-def existing_manifest(tmp_path) -> Tuple[ColorizerDatasetWriter, Path, Path]:
+def existing_manifest(tmp_path) -> Tuple[TfeDatasetWriter, Path, Path]:
     return setup_manifest_and_writer(tmp_path, EXISTING_MANIFEST_CONTENT)
 
 
 @pytest.fixture
-def blank_manifest(tmp_path) -> Tuple[ColorizerDatasetWriter, Path, Path]:
+def blank_manifest(tmp_path) -> Tuple[TfeDatasetWriter, Path, Path]:
     return setup_manifest_and_writer(tmp_path, BLANK_MANIFEST_CONTENT)
 
 
@@ -80,7 +80,7 @@ def test_metadata_uses_frame_dims_subfield(tmp_path):
 
     for i in range(len(frame_dimensions)):
         width, height, units = frame_dimensions[i]
-        writer = ColorizerDatasetWriter(tmp_path, DEFAULT_DATASET_NAME)
+        writer = TfeDatasetWriter(tmp_path, DEFAULT_DATASET_NAME)
         setup_dummy_writer_data(writer)
         writer.write_manifest(
             metadata=DatasetMetadata(
@@ -236,7 +236,7 @@ def test_writer_updates_fields_when_metadata_is_missing(blank_manifest):
 
 
 def test_writer_overwrites_duplicate_feature_keys(tmp_path):
-    writer = ColorizerDatasetWriter(tmp_path, DEFAULT_DATASET_NAME)
+    writer = TfeDatasetWriter(tmp_path, DEFAULT_DATASET_NAME)
     setup_dummy_writer_data(writer)
 
     feature_1_info = FeatureInfo(key="shared_feature_key", label="Feature 1")
@@ -254,7 +254,7 @@ def test_writer_overwrites_duplicate_feature_keys(tmp_path):
 
 
 def test_writer_overwrites_duplicate_backdrop_keys(tmp_path):
-    writer = ColorizerDatasetWriter(tmp_path, DEFAULT_DATASET_NAME)
+    writer = TfeDatasetWriter(tmp_path, DEFAULT_DATASET_NAME)
     setup_dummy_writer_data(writer)
 
     writer.add_backdrops("Backdrop 1", [], "shared_backdrop_key")
@@ -273,7 +273,7 @@ class TestWriteFeature:
     def test_write_feature_ignores_outliers_when_calculating_feature_min_max(
         self, tmp_path
     ):
-        writer = ColorizerDatasetWriter(tmp_path, DEFAULT_DATASET_NAME)
+        writer = TfeDatasetWriter(tmp_path, DEFAULT_DATASET_NAME)
         setup_dummy_writer_data(writer)
 
         feature_info = FeatureInfo(key="feature", label="Feature")
@@ -296,7 +296,7 @@ class TestWriteFeature:
 
     def test_writer_ignores_infinity_values_for_feature_min_max(self, tmp_path):
         # Test that infinity values are ignored when calculating min/max
-        writer = ColorizerDatasetWriter(tmp_path, DEFAULT_DATASET_NAME)
+        writer = TfeDatasetWriter(tmp_path, DEFAULT_DATASET_NAME)
         setup_dummy_writer_data(writer)
 
         feature_info = FeatureInfo(key="feature", label="Feature")
@@ -319,7 +319,7 @@ class TestWriteFeature:
     def test_write_feature_uses_overrides_when_calculating_feature_min_max(
         self, tmp_path
     ):
-        writer = ColorizerDatasetWriter(tmp_path, DEFAULT_DATASET_NAME)
+        writer = TfeDatasetWriter(tmp_path, DEFAULT_DATASET_NAME)
         setup_dummy_writer_data(writer)
 
         feature_info = FeatureInfo(key="feature", label="Feature", min=-5, max=3)
@@ -338,7 +338,7 @@ class TestWriteFeature:
                 assert feature_data["data"] == [0, 1, 2, 3, 4]
 
     def test_writer_throws_error_if_feature_has_no_finite_values(self, tmp_path):
-        writer = ColorizerDatasetWriter(tmp_path, DEFAULT_DATASET_NAME)
+        writer = TfeDatasetWriter(tmp_path, DEFAULT_DATASET_NAME)
         setup_dummy_writer_data(writer)
 
         feature_info = FeatureInfo(key="feature", label="Feature")
@@ -346,7 +346,7 @@ class TestWriteFeature:
             writer.write_feature(np.array([-np.inf, np.nan, np.inf]), feature_info)
 
     def test_writer_throws_error_if_feature_has_only_outlier_values(self, tmp_path):
-        writer = ColorizerDatasetWriter(tmp_path, DEFAULT_DATASET_NAME)
+        writer = TfeDatasetWriter(tmp_path, DEFAULT_DATASET_NAME)
         setup_dummy_writer_data(writer)
 
         feature_info = FeatureInfo(key="feature", label="Feature")
@@ -361,7 +361,7 @@ class TestWriteFeature:
         # Generally we want to ignore infinity values when calculating min/max,
         # but if the user explicitly sets min/max to infinity, we should
         # serialize them as strings in the JSON file to avoid parsing errors.
-        writer = ColorizerDatasetWriter(tmp_path, DEFAULT_DATASET_NAME)
+        writer = TfeDatasetWriter(tmp_path, DEFAULT_DATASET_NAME)
         setup_dummy_writer_data(writer)
 
         feature_info = FeatureInfo(
@@ -381,7 +381,7 @@ class TestWriteFeature:
                 assert feature_data["data"] == [0, 1, 2, np.inf, -np.inf, 4]
 
     def test_write_feature_writes_parquet_data(self, tmp_path):
-        writer = ColorizerDatasetWriter(tmp_path, DEFAULT_DATASET_NAME)
+        writer = TfeDatasetWriter(tmp_path, DEFAULT_DATASET_NAME)
         setup_dummy_writer_data(writer)
 
         feature_info = FeatureInfo(key="feature", label="Feature")
@@ -406,7 +406,7 @@ class TestWriteFeature:
             assert table.to_pandas()["data"].tolist() == data.tolist()
 
     def write_features_can_write_nan_to_parquet(self, tmp_path):
-        writer = ColorizerDatasetWriter(tmp_path, DEFAULT_DATASET_NAME)
+        writer = TfeDatasetWriter(tmp_path, DEFAULT_DATASET_NAME)
         setup_dummy_writer_data(writer)
 
         feature_info = FeatureInfo(key="feature", label="Feature")
@@ -446,7 +446,7 @@ class TestWriteData:
         ),
     }
 
-    def write_default_data(self, writer: ColorizerDatasetWriter, write_json: bool):
+    def write_default_data(self, writer: TfeDatasetWriter, write_json: bool):
         writer.write_data(
             tracks=self.default_data["tracks"],
             times=self.default_data["times"],
@@ -482,13 +482,13 @@ class TestWriteData:
                     self.validate_parquet(data_path, self.default_data[key])
 
     def test_write_data_writes_json_data(self, tmp_path):
-        writer = ColorizerDatasetWriter(tmp_path, DEFAULT_DATASET_NAME)
+        writer = TfeDatasetWriter(tmp_path, DEFAULT_DATASET_NAME)
         self.write_default_data(writer, write_json=True)
         writer.write_manifest()
         self.validate_default_data(tmp_path / DEFAULT_DATASET_NAME, write_json=True)
 
     def test_write_data_writes_parquet_data(self, tmp_path):
-        writer = ColorizerDatasetWriter(tmp_path, DEFAULT_DATASET_NAME)
+        writer = TfeDatasetWriter(tmp_path, DEFAULT_DATASET_NAME)
         self.write_default_data(writer, write_json=False)
         writer.write_manifest()
         self.validate_default_data(tmp_path / DEFAULT_DATASET_NAME, write_json=False)

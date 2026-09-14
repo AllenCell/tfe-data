@@ -35,7 +35,7 @@ from tfe_data.utils import (
     sanitize_path_by_platform,
     scale_image,
 )
-from tfe_data.writer import ColorizerDatasetWriter
+from tfe_data.writer import TfeDatasetWriter
 
 
 @dataclass
@@ -67,7 +67,7 @@ def _get_image_from_row(row: pd.DataFrame, config: ConverterConfig) -> BioImage:
 def _make_frame(
     frame: pd.DataFrame,
     scale: float,
-    writer: ColorizerDatasetWriter,
+    writer: TfeDatasetWriter,
     config: ConverterConfig,
 ):
     start_time = time.time()
@@ -96,7 +96,7 @@ def _make_frame(
 def _make_frames_parallel(
     grouped_frames: DataFrameGroupBy,
     scale: float,
-    writer: ColorizerDatasetWriter,
+    writer: TfeDatasetWriter,
     config: ConverterConfig,
 ):
     """
@@ -130,7 +130,7 @@ def _get_data_or_none(
 
 def _write_data(
     dataset: pd.DataFrame,
-    writer: ColorizerDatasetWriter,
+    writer: TfeDatasetWriter,
     config: ConverterConfig,
 ):
     outliers_data = _get_data_or_none(dataset, config.outlier_column)
@@ -192,7 +192,7 @@ def _get_raw_backdrop_paths(
 def _write_backdrop_from_column(
     backdrop_column: str,
     grouped_frames: DataFrameGroupBy,
-    writer: ColorizerDatasetWriter,
+    writer: TfeDatasetWriter,
     config: ConverterConfig,
 ):
     backdrop_metadata = BackdropMetadata(
@@ -243,7 +243,7 @@ def _write_backdrop_from_column(
 
 def _write_backdrops(
     dataset: pd.DataFrame,
-    writer: ColorizerDatasetWriter,
+    writer: TfeDatasetWriter,
     config: ConverterConfig,
 ):
     grouped_frames = dataset.groupby(config.times_column)
@@ -284,7 +284,7 @@ def _get_reserved_column_names(config: ConverterConfig) -> List[str]:
 
 def _write_features(
     dataset: pd.DataFrame,
-    writer: ColorizerDatasetWriter,
+    writer: TfeDatasetWriter,
     config: ConverterConfig,
 ):
     # Detect all features
@@ -324,7 +324,7 @@ def _write_features(
 
 
 def _should_regenerate_frames(
-    writer: ColorizerDatasetWriter, data: DataFrame, config: ConverterConfig
+    writer: TfeDatasetWriter, data: DataFrame, config: ConverterConfig
 ) -> bool:
     if "frames" not in writer.manifest:
         logging.info("No frames found in dataset manifest. Regenerating all frames.")
@@ -362,7 +362,7 @@ def _should_regenerate_frames(
     return False
 
 
-def _validate_manifest(writer: ColorizerDatasetWriter):
+def _validate_manifest(writer: TfeDatasetWriter):
     if len(writer.features) == 0:
         raise ValueError(
             "No features found in dataset. At least one feature is required."
@@ -370,7 +370,7 @@ def _validate_manifest(writer: ColorizerDatasetWriter):
 
 
 def _handle_3d_frames(
-    data: DataFrame, writer: ColorizerDatasetWriter, config: ConverterConfig
+    data: DataFrame, writer: TfeDatasetWriter, config: ConverterConfig
 ) -> None:
     # Check for 3D frame src (TODO: safe to assume Zarr?)
     # If 3D frame src is provided, go to 3D source (using bioio) and check the number of frames.
@@ -568,7 +568,7 @@ def convert_tfe_data(
         source_dir = pathlib.Path.cwd()
     original_cwd = pathlib.Path.cwd()
 
-    writer = ColorizerDatasetWriter(parent_directory, dataset_name)
+    writer = TfeDatasetWriter(parent_directory, dataset_name)
 
     try:
         # Change source directory for evaluating relative paths

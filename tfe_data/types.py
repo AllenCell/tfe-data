@@ -185,7 +185,7 @@ class Frames3dMetadata(DataClassJsonMixin):
 @dataclass
 class DatasetMetadata(DataClassJsonMixin):
     """
-    Data class representation of metadata for a Colorizer dataset. Can be
+    Data class representation of metadata for a TFE dataset. Can be
     converted to and from camelCase JSON format; see
     https://pypi.org/project/dataclasses-json/.
     """
@@ -309,7 +309,7 @@ class DatasetManifest(TypedDict):
 @dataclass
 class CollectionMetadata(DataClassJsonMixin):
     """
-    Data class representation of metadata for a Colorizer collection file.
+    Data class representation of metadata for a TFE collection file.
     Can be converted to and from camelCase JSON format; see https://pypi.org/project/dataclasses-json/.
     """
 

@@ -832,7 +832,7 @@ A collection file can also include optional metadata fields, saved under the `me
 Once you get the first frame in your dataset, you'll need to save the `starting_timepoint` to your dataset's metadata and include the information when generating the frame paths.
 
 ```python
-writer = ColorizerDatasetWriter(...)
+writer = TfeDatasetWriter(...)
 starting_timepoint = 5
 num_frames = 100
 
