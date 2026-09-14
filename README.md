@@ -1,4 +1,4 @@
-# colorizer-data
+# tfe-data
 
 _**Python utilities to prepare data for the [Timelapse Feature Explorer](https://github.com/allen-cell-animated/timelapse-colorizer)**_
 
@@ -16,10 +16,10 @@ If using these example scripts, you'll need to run these commands in an environm
 
 ```cmd
 # pip
-pip install git+https://github.com/allen-cell-animated/colorizer-data.git@v1.7.1
+pip install git+https://github.com/AllenCell/tfe-data.git@v1.7.1
 
 # requirements.txt
-colorizer_data @ git+https://github.com/allen-cell-animated/colorizer-data.git@v1.7.1
+colorizer_data @ git+https://github.com/AllenCell/tfe-data.git@v1.7.1
 ```
 
 To install a different version, replace the end of the URL with a specific version or branch, like `@vX.X.X` or `@{branch-name}`.

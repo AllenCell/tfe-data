@@ -56,7 +56,7 @@ class ColorizerDatasetWriter:
         reading existing data.
 
     The dataset subdirectory will contain a `manifest.json` and additional dataset files,
-    following the data schema described in the project documentation. (See [DATA_FORMAT.md](https://github.com/allen-cell-animated/colorizer-data/blob/main/documentation/DATA_FORMAT.md) for
+    following the data schema described in the project documentation. (See [DATA_FORMAT.md](https://github.com/AllenCell/tfe-data/blob/main/documentation/DATA_FORMAT.md) for
     more details.)
     """
 
@@ -182,7 +182,7 @@ class ColorizerDatasetWriter:
         string `categories`, defined in `info`. Values that don't match indices in the list
         (e.g., `x < 0` or `x >= len(info.categories)`) will be replaced with `np.NaN`.
 
-        See the [documentation on features](https://github.com/allen-cell-animated/colorizer-data/blob/main/documentation/DATA_FORMAT.md#2-6-features) for more details.
+        See the [documentation on features](https://github.com/AllenCell/tfe-data/blob/main/documentation/DATA_FORMAT.md#2-6-features) for more details.
         """
         # TODO: Write feature files using the keys of the features instead
 
@@ -354,7 +354,7 @@ class ColorizerDatasetWriter:
             write_json (`bool`): Whether to write the specified data as a JSON file rather than the default Parquet format.
                 Parquet data is compatible with TFE viewer >= v1.1.0. Default is `False`.
 
-        [documentation](https://github.com/allen-cell-animated/colorizer-data/blob/main/documentation/DATA_FORMAT.md#2-1-tracks)
+        [documentation](https://github.com/AllenCell/tfe-data/blob/main/documentation/DATA_FORMAT.md#2-1-tracks)
         """
         # TODO check outlier and replace values with NaN or something!
         if outliers is not None:
@@ -531,7 +531,7 @@ class ColorizerDatasetWriter:
         Note that some metadata fields (like `last_modified`, `_writer_version`, `_revision`, and `date_created`) will
         be automatically updated. Add definitions for these fields in the `metadata` argument to override this behavior.
 
-        [documentation](https://github.com/allen-cell-animated/colorizer-data/blob/main/documentation/DATA_FORMAT.md#2-Dataset)
+        [documentation](https://github.com/AllenCell/tfe-data/blob/main/documentation/DATA_FORMAT.md#2-Dataset)
         """
 
         if num_frames is not None and "frames" not in self.manifest:
@@ -602,7 +602,7 @@ class ColorizerDatasetWriter:
         Returns:
           str: The relative path to the saved image file.
 
-        [documentation](https://github.com/allen-cell-animated/colorizer-data/blob/main/documentation/DATA_FORMAT.md#2-3-frames)
+        [documentation](https://github.com/AllenCell/tfe-data/blob/main/documentation/DATA_FORMAT.md#2-3-frames)
         """
         seg_rgba = np.zeros(
             (seg_remapped.shape[0], seg_remapped.shape[1], 4), dtype=np.uint8

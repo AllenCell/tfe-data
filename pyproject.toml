@@ -46,8 +46,8 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/allen-cell-animated/colorizer-data"
-Issues = "https://github.com/allen-cell-animated/colorizer-data/issues"
+Homepage = "https://github.com/AllenCell/tfe-data"
+Issues = "https://github.com/AllenCell/tfe-data/issues"
 
 [project.scripts]
 tfe-open = "tfe_data.bin.tfe_open:main"

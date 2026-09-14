@@ -61,7 +61,7 @@ The most important file is the **manifest**, which is a JSON file that describes
 
 _Note: all paths are relative to the location of the manifest file._
 
-A complete example dataset is also available in the [`documentation`](./example_dataset) directory of this project, and can be [viewed on Timelapse Feature Explorer](https://timelapse.allencell.org/viewer?dataset=https://raw.githubusercontent.com/allen-cell-animated/colorizer-data/main/documentation/example_dataset/manifest.json).
+A complete example dataset is also available in the [`documentation`](./example_dataset) directory of this project, and can be [viewed on Timelapse Feature Explorer](https://timelapse.allencell.org/viewer?dataset=https://raw.githubusercontent.com/AllenCell/tfe-data/main/documentation/example_dataset/manifest.json).
 
 ### File formats
 
@@ -404,7 +404,7 @@ Additional notes:
 
 - Encoded object ID's in the frame data start at `1` instead of `0`, because `#000000` (black) is reserved for the background.
 - The highest object ID that can currently be represented is `16,843,007`.
-  - If the **total number of segmented objects** for an entire time series exceeds this number, it is possible to remove this limit. [Submit an issue](https://github.com/allen-cell-animated/colorizer-data/issues) or send us a message!
+  - If the **total number of segmented objects** for an entire time series exceeds this number, it is possible to remove this limit. [Submit an issue](https://github.com/AllenCell/tfe-data/issues) or send us a message!
 
 There should be one frame for every time step in the time series, and they must all be listed in order in the **manifest** file to be included in the dataset.
 
