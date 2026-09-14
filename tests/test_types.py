@@ -1,4 +1,4 @@
-from colorizer_data.types import ColorizerMetadata
+from tfe_data.types import ColorizerMetadata
 
 
 def test_manifest_from_dict_handles_empty_dict():

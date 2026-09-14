@@ -17,7 +17,7 @@ import pyarrow.parquet as pq
 import requests
 import skimage
 
-from colorizer_data.types import (
+from tfe_data.types import (
     CURRENT_VERSION,
     DATETIME_FORMAT,
     CollectionManifest,
@@ -449,7 +449,7 @@ def update_bounding_box_data(
         seg_remapped (np.ndarray): Segmentation image whose indices start at 1 and are are absolutely unique across the whole dataset,
             such as the results of `remap_segmented_image()`.
 
-    [Documentation for bounds data format](https://github.com/allen-cell-animated/colorizer-data/blob/main/documentation/DATA_FORMAT.md#2-8-bounds-optional)
+    [Documentation for bounds data format](https://github.com/AllenCell/tfe-data/blob/main/documentation/DATA_FORMAT.md#2-8-bounds-optional)
     """
     # Capture bounding boxes
     object_ids = np.unique(seg_remapped)

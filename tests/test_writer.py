@@ -7,13 +7,13 @@ import numpy as np
 import pytest
 import pyarrow.parquet as pq
 
-from colorizer_data.types import (
+from tfe_data.types import (
     CURRENT_VERSION,
     ColorizerMetadata,
     DatasetManifest,
     FeatureInfo,
 )
-from colorizer_data.writer import ColorizerDatasetWriter
+from tfe_data.writer import ColorizerDatasetWriter
 
 DEFAULT_DATASET_NAME = "dataset"
 
