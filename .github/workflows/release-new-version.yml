@@ -21,7 +21,6 @@ jobs:
   bump-version:
     runs-on: ubuntu-latest
     if: ${{ github.ref_name == github.event.repository.default_branch }}
-    needs: [get-next-version]
 
     outputs:
       version-tag: ${{ steps.get-tag.outputs.VERSION_TAG }}
