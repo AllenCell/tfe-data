@@ -32,7 +32,6 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0 # fetch full commit and tag history
-          filter: blob:none # exclude file contents for faster checkout
           persist-credentials: false
 
       - name: Setup Python
@@ -50,14 +49,15 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Bump version
-        run: bump-my-version bump -v ${ BUMP_TYPE }
+        run: bump-my-version bump -v ${BUMP_TYPE}
         env:
           BUMP_TYPE: ${{ inputs.increment }}
 
       - name: Push changes and new tag
         run: |
-          git push origin main ${DEFAULT_BRANCH}
+          git push origin ${DEFAULT_BRANCH}
           git push origin --tags
+        token: ${{ secrets.GITHUB_TOKEN }}
         env:
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
 
