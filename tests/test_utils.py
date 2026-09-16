@@ -3,7 +3,7 @@ from pathlib import Path, PurePosixPath, PureWindowsPath
 import platform
 from typing import List
 import numpy as np
-from colorizer_data.types import (
+from tfe_data.types import (
     CURRENT_VERSION,
     CollectionDatasetEntry,
     CollectionManifest,
@@ -11,7 +11,7 @@ from colorizer_data.types import (
     FeatureInfo,
     FeatureType,
 )
-from colorizer_data.utils import (
+from tfe_data.utils import (
     cast_feature_to_info_type,
     get_duplicate_items,
     infer_feature_type,

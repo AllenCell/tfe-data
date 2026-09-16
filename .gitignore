@@ -8,7 +8,7 @@ venv/
 __pycache__/
 
 # Ignore local installed viewer
-colorizer_data/bin/viewer/latest
+tfe_data/bin/viewer/latest
 
-# Ignore uv lock file (better not commited for a library)
+# Ignore uv lock file (better not committed for a library)
 uv.lock

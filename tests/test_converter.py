@@ -8,9 +8,9 @@ import pandas as pd
 import pytest
 from typing import Dict, List, Union
 
-from colorizer_data import convert_colorizer_data
-from colorizer_data.types import DataFileType, FeatureMetadata, Frames3dMetadata
-from colorizer_data.utils import read_data_array_file
+from tfe_data import convert_colorizer_data
+from tfe_data.types import DataFileType, FeatureMetadata, Frames3dMetadata
+from tfe_data.utils import read_data_array_file
 
 asset_path = pathlib.Path(__file__).parent / "assets"
 
@@ -387,7 +387,7 @@ def test_rewrites_images_when_object_count_changes(existing_dataset):
     frame_0_time = os.path.getmtime(existing_dataset / "frame_0.png")
     frame_1_time = os.path.getmtime(existing_dataset / "frame_1.png")
 
-    csv_content = f"{sample_csv_headers}\n{sample_csv_data}\n4,3,1,70,80,0.9,4,D,1,./colorizer_data/tests/assets/test_csv/frame_1.tiff"
+    csv_content = f"{sample_csv_headers}\n{sample_csv_data}\n4,3,1,70,80,0.9,4,D,1,f{asset_path / 'test_csv/frame_1.tiff'}"
     csv_data = pd.read_csv(StringIO(csv_content))
     convert_colorizer_data(csv_data, existing_dataset, force_frame_generation=False)
 

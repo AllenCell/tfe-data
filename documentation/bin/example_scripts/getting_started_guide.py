@@ -17,7 +17,7 @@ pip install -r requirements.txt
 python ../bin/example_scripts/getting_started_guide.py
 
 # 4. Open the viewer:
-python ../../colorizer_data/bin/tfe_open.py processed_dataset/collection.json
+python ../../tfe_data/bin/tfe_open.py processed_dataset/collection.json
 
 # If you install the project in editable mode (`pip install -e .` from the
 # root directory), you can also run `tfe-open.py` from anywhere:
@@ -27,7 +27,7 @@ tfe-open processed_dataset/collection.json
 
 from pathlib import Path
 
-from colorizer_data import (
+from tfe_data import (
     convert_colorizer_data,
     FeatureInfo,
     FeatureType,
@@ -36,7 +36,6 @@ from colorizer_data import (
     update_collection,
 )
 import pandas as pd
-
 
 source_directory = Path("raw_datasets")
 dataset_directories = ["dataset_1", "dataset_2"]
