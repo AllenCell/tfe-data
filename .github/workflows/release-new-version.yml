@@ -43,6 +43,12 @@ jobs:
       - name: Install dependencies
         run: pip install -e '.[dev]'
 
+      # Configure git before bumping version, since it makes a commit
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
       - name: Bump version
         run: bump-my-version bump -v ${ BUMP_TYPE }
         env:
@@ -50,8 +56,6 @@ jobs:
 
       - name: Push changes and new tag
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
           git push origin main ${DEFAULT_BRANCH}
           git push origin --tags
         env:
@@ -60,8 +64,6 @@ jobs:
       - name: Get the new tag
         id: get-tag
         run: echo "VERSION_TAG=$(git describe --tags --abbrev=0)" >> "$GITHUB_OUTPUT"
-        outputs:
-          VERSION_TAG: ${{ env.VERSION_TAG }}
 
   create-draft-release:
     if: ${{ github.ref_name == github.event.repository.default_branch }}
