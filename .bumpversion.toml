@@ -6,9 +6,6 @@ tag_name = "v{new_version}"
 current_version = "1.7.1"
 
 [[tool.bumpversion.files]]
-glob = "documentation/**/*.md"
-
-[[tool.bumpversion.files]]
 glob = "*.md"
 
 [[tool.bumpversion.files]]
@@ -19,3 +16,6 @@ filename = "pyproject.toml"
 
 [[tool.bumpversion.files]]
 filename = "documentation/getting_started_guide/requirements.txt"
+
+[[tool.bumpversion.files]]
+glob = "documentation/DATA_FORMAT.md"
