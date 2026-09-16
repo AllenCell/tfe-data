@@ -5,13 +5,14 @@ import os
 import pathlib
 import shutil
 from typing import Dict, List, Optional, Union
+from typing_extensions import deprecated
 
 import numpy as np
 from PIL import Image
 
 from tfe_data.types import (
     BackdropMetadata,
-    ColorizerMetadata,
+    DatasetMetadata,
     DatasetManifest,
     FeatureInfo,
     FeatureMetadata,
@@ -41,9 +42,9 @@ from tfe_data.utils import (
 MAX_SEG_ID_GAP = 10
 
 
-class ColorizerDatasetWriter:
+class TfeDatasetWriter:
     """
-    Writes provided data as Colorizer-compatible dataset files to the configured output directory.
+    Writes provided data as TFE-compatible dataset files to the configured output directory.
 
     Args:
       output_dir (`str | pathlib.Path`): The output directory to write the dataset to.
@@ -63,7 +64,7 @@ class ColorizerDatasetWriter:
     outpath: pathlib.Path
     default_dataset_name: str
     manifest: DatasetManifest
-    metadata: ColorizerMetadata
+    metadata: DatasetMetadata
     backdrops: Dict[str, BackdropMetadata]
     features: Dict[str, FeatureMetadata]
     scale: float
@@ -111,9 +112,9 @@ class ColorizerDatasetWriter:
         self.default_dataset_name = dataset
         if "metadata" not in self.manifest:
             # New default metadata
-            self.metadata = ColorizerMetadata()
+            self.metadata = DatasetMetadata()
         else:
-            self.metadata = ColorizerMetadata.from_dict(self.manifest["metadata"])
+            self.metadata = DatasetMetadata.from_dict(self.manifest["metadata"])
 
     def write_categorical_feature(
         self,
@@ -234,7 +235,7 @@ class ColorizerDatasetWriter:
                 fmin = np.nanmin(filtered_data)
             except ValueError:
                 raise ValueError(
-                    "ColorizerDatasetWriter.write_feature: Feature '{}' had no finite, non-outlier values when calculating min/max bounds.".format(
+                    "TfeDatasetWriter.write_feature: Feature '{}' had no finite, non-outlier values when calculating min/max bounds.".format(
                         info.get_name()
                     )
                     + " Provide a min and max property in FeatureInfo to override automatic bounds calculation."
@@ -245,7 +246,7 @@ class ColorizerDatasetWriter:
                 fmax = np.nanmax(filtered_data)
             except ValueError:
                 raise ValueError(
-                    "ColorizerDatasetWriter.write_feature: Feature '{}' has no finite, non-outlier values when calculating min/max bounds.".format(
+                    "TfeDatasetWriter.write_feature: Feature '{}' has no finite, non-outlier values when calculating min/max bounds.".format(
                         info.get_name()
                     )
                     + " Provide a min and max property in FeatureInfo to override automatic bounds calculation."
@@ -507,7 +508,7 @@ class ColorizerDatasetWriter:
     def set_3d_frame_data(self, data: Frames3dMetadata) -> None:
         if data.total_frames is None:
             logging.info(
-                "ColorizerDatasetWriter: The `total_frames` property of the Frames3dMetadata object is `None`. Will attempt to infer the number of frames from the provided data."
+                "TfeDatasetWriter: The `total_frames` property of the Frames3dMetadata object is `None`. Will attempt to infer the number of frames from the provided data."
             )
             data.total_frames = _get_frame_count_from_3d_source(data.source)
         self.manifest["frames3d"] = data.to_dict()
@@ -517,7 +518,7 @@ class ColorizerDatasetWriter:
     def write_manifest(
         self,
         num_frames: int = None,
-        metadata: ColorizerMetadata = None,
+        metadata: DatasetMetadata = None,
     ):
         """
         Writes the final manifest file for the dataset in the configured output directory.
@@ -526,7 +527,7 @@ class ColorizerDatasetWriter:
 
         Args:
             num_frames (int): DEPRECATED. Define to generate the expected paths for frame images.
-            metadata (ColorizerMetadata): Metadata to be written with the dataset. Leave fields blank to use existing default values.
+            metadata (DatasetMetadata): Metadata to be written with the dataset. Leave fields blank to use existing default values.
 
         Note that some metadata fields (like `last_modified`, `_writer_version`, `_revision`, and `date_created`) will
         be automatically updated. Add definitions for these fields in the `metadata` argument to override this behavior.
@@ -536,7 +537,7 @@ class ColorizerDatasetWriter:
 
         if num_frames is not None and "frames" not in self.manifest:
             logging.warning(
-                "ColorizerDatasetWriter: The argument `num_frames` on `write_manifest` is deprecated and will be removed in the future! Please call `set_frame_paths(generate_frame_paths(num_frames))` instead."
+                "TfeDatasetWriter: The argument `num_frames` on `write_manifest` is deprecated and will be removed in the future! Please call `set_frame_paths(generate_frame_paths(num_frames))` instead."
             )
             self.set_frame_paths(generate_frame_paths(num_frames))
 
@@ -722,3 +723,10 @@ class ColorizerDatasetWriter:
                     check_file_source(
                         f"3D frames backdrop {i} source", backdrop_source, self.outpath
                     )
+
+
+@deprecated(
+    "ColorizerDatasetWriter is deprecated and will be removed in the next major release. Please use TfeDatasetWriter instead."
+)
+class ColorizerDatasetWriter(TfeDatasetWriter):
+    pass

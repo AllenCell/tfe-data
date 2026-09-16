@@ -28,10 +28,10 @@ tfe-open processed_dataset/collection.json
 from pathlib import Path
 
 from tfe_data import (
-    convert_colorizer_data,
+    convert_tfe_data,
     FeatureInfo,
     FeatureType,
-    ColorizerMetadata,
+    DatasetMetadata,
     CollectionMetadata,
     update_collection,
 )
@@ -90,7 +90,7 @@ def main():
         dataset_out_dir.mkdir(parents=True, exist_ok=True)
 
         # Dataset metadata
-        metadata = ColorizerMetadata(
+        metadata = DatasetMetadata(
             name="Example dataset {}".format(i + 1),
             description="An example dataset for the Timelapse Feature Explorer.",
             author="Author name et al.",
@@ -107,7 +107,7 @@ def main():
 
         # Convert the dataset
         data: pd.DataFrame = pd.read_csv(dataset_src_dir / "data.csv")
-        convert_colorizer_data(
+        convert_tfe_data(
             data,
             dataset_out_dir,
             source_dir=dataset_src_dir,

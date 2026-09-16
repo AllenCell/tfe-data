@@ -1,10 +1,10 @@
-from tfe_data.types import ColorizerMetadata
+from tfe_data.types import DatasetMetadata
 
 
 def test_manifest_from_dict_handles_empty_dict():
     manifest_dict = {}
     # Test that this does not crash
-    metadata = ColorizerMetadata.from_dict(manifest_dict)
+    metadata = DatasetMetadata.from_dict(manifest_dict)
 
 
 def test_manifest_from_dict_handles_partial_frame_dims():
@@ -19,7 +19,7 @@ def test_manifest_from_dict_handles_partial_frame_dims():
 
     for frame_dims in frame_dimensions:
         manifest_dict = {"frameDims": frame_dims}
-        metadata = ColorizerMetadata.from_dict(manifest_dict)
+        metadata = DatasetMetadata.from_dict(manifest_dict)
 
         # Check for default values for nested fields
         if "width" in frame_dims.keys():

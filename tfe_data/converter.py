@@ -1,3 +1,4 @@
+from functools import wraps
 import logging
 import math
 import multiprocessing
@@ -6,6 +7,7 @@ import pathlib
 import shutil
 import time
 from typing import Dict, List, Optional, Union
+from typing_extensions import deprecated
 
 from bioio import BioImage
 from dataclasses import dataclass
@@ -14,10 +16,9 @@ from pandas.core.groupby.generic import DataFrameGroupBy
 import pandas as pd
 import numpy as np
 
-
 from tfe_data.types import (
     BackdropMetadata,
-    ColorizerMetadata,
+    DatasetMetadata,
     DataFileType,
     FeatureInfo,
     Frames3dMetadata,
@@ -34,7 +35,7 @@ from tfe_data.utils import (
     sanitize_path_by_platform,
     scale_image,
 )
-from tfe_data.writer import ColorizerDatasetWriter
+from tfe_data.writer import TfeDatasetWriter
 
 
 @dataclass
@@ -66,7 +67,7 @@ def _get_image_from_row(row: pd.DataFrame, config: ConverterConfig) -> BioImage:
 def _make_frame(
     frame: pd.DataFrame,
     scale: float,
-    writer: ColorizerDatasetWriter,
+    writer: TfeDatasetWriter,
     config: ConverterConfig,
 ):
     start_time = time.time()
@@ -95,7 +96,7 @@ def _make_frame(
 def _make_frames_parallel(
     grouped_frames: DataFrameGroupBy,
     scale: float,
-    writer: ColorizerDatasetWriter,
+    writer: TfeDatasetWriter,
     config: ConverterConfig,
 ):
     """
@@ -129,7 +130,7 @@ def _get_data_or_none(
 
 def _write_data(
     dataset: pd.DataFrame,
-    writer: ColorizerDatasetWriter,
+    writer: TfeDatasetWriter,
     config: ConverterConfig,
 ):
     outliers_data = _get_data_or_none(dataset, config.outlier_column)
@@ -191,7 +192,7 @@ def _get_raw_backdrop_paths(
 def _write_backdrop_from_column(
     backdrop_column: str,
     grouped_frames: DataFrameGroupBy,
-    writer: ColorizerDatasetWriter,
+    writer: TfeDatasetWriter,
     config: ConverterConfig,
 ):
     backdrop_metadata = BackdropMetadata(
@@ -242,7 +243,7 @@ def _write_backdrop_from_column(
 
 def _write_backdrops(
     dataset: pd.DataFrame,
-    writer: ColorizerDatasetWriter,
+    writer: TfeDatasetWriter,
     config: ConverterConfig,
 ):
     grouped_frames = dataset.groupby(config.times_column)
@@ -283,7 +284,7 @@ def _get_reserved_column_names(config: ConverterConfig) -> List[str]:
 
 def _write_features(
     dataset: pd.DataFrame,
-    writer: ColorizerDatasetWriter,
+    writer: TfeDatasetWriter,
     config: ConverterConfig,
 ):
     # Detect all features
@@ -323,7 +324,7 @@ def _write_features(
 
 
 def _should_regenerate_frames(
-    writer: ColorizerDatasetWriter, data: DataFrame, config: ConverterConfig
+    writer: TfeDatasetWriter, data: DataFrame, config: ConverterConfig
 ) -> bool:
     if "frames" not in writer.manifest:
         logging.info("No frames found in dataset manifest. Regenerating all frames.")
@@ -361,7 +362,7 @@ def _should_regenerate_frames(
     return False
 
 
-def _validate_manifest(writer: ColorizerDatasetWriter):
+def _validate_manifest(writer: TfeDatasetWriter):
     if len(writer.features) == 0:
         raise ValueError(
             "No features found in dataset. At least one feature is required."
@@ -369,7 +370,7 @@ def _validate_manifest(writer: ColorizerDatasetWriter):
 
 
 def _handle_3d_frames(
-    data: DataFrame, writer: ColorizerDatasetWriter, config: ConverterConfig
+    data: DataFrame, writer: TfeDatasetWriter, config: ConverterConfig
 ) -> None:
     # Check for 3D frame src (TODO: safe to assume Zarr?)
     # If 3D frame src is provided, go to 3D source (using bioio) and check the number of frames.
@@ -387,12 +388,12 @@ def _handle_3d_frames(
     writer.set_3d_frame_data(config.frames_3d)
 
 
-def convert_colorizer_data(
+def convert_tfe_data(
     data: DataFrame,
     output_dir: Union[str, pathlib.Path],
     *,
     source_dir: Optional[Union[str, pathlib.Path]] = None,
-    metadata: Optional[ColorizerMetadata] = None,
+    metadata: Optional[DatasetMetadata] = None,
     object_id_column: str = "ID",  # DEPRECATED
     segmentation_id_column: str = None,
     times_column: str = "Frame",
@@ -427,9 +428,9 @@ def convert_colorizer_data(
             relative paths in the `data` DataFrame will be resolved relative to this directory.
             Absolute paths will not be affected by this value. If `None`, the current working
             directory (`.`) will be used.
-        metadata (ColorizerMetadata | None): Metadata to include in the dataset's manifest, such
+        metadata (DatasetMetadata | None): Metadata to include in the dataset's manifest, such
             as the dataset name, author, dataset description, frame resolution, and time units.
-            See `ColorizerMetadata` for more information. Note that some information will be
+            See `DatasetMetadata` for more information. Note that some information will be
             written automatically, such as a timestamp and revision number.
         object_id_column (str): DEPRECATED. The name of the column containing the segmentation ID
             of a given object in the frame or image data. Overridden by `segmentation_id_column`
@@ -487,15 +488,15 @@ def convert_colorizer_data(
     Example:
         ```python
             import pandas as pd
-            from tfe_data import convert_colorizer_data
+            from tfe_data import convert_tfe_data
 
             # 1. Assuming CSV data has default columns "ID", "Track",
             #    "Frame", and "File Path":
             data = pd.read_csv("some/path/data.csv")
-            convert_colorizer_data(data, "dataset_dir/dataset_name")
+            convert_tfe_data(data, "dataset_dir/dataset_name")
 
             # 2. If not, you can specify the column names:
-            convert_colorizer_data(
+            convert_tfe_data(
                 data,
                 "dataset_dir/dataset_name",
                 object_id_column="my_id_column",
@@ -522,7 +523,7 @@ def convert_colorizer_data(
                     categories=["Colony", "Edge", "Migratory"],
                 ),
             }
-            convert_colorizer_data(
+            convert_tfe_data(
                 data,
                 "dataset_dir/dataset_name",
                 feature_info=feature_info,
@@ -567,7 +568,7 @@ def convert_colorizer_data(
         source_dir = pathlib.Path.cwd()
     original_cwd = pathlib.Path.cwd()
 
-    writer = ColorizerDatasetWriter(parent_directory, dataset_name)
+    writer = TfeDatasetWriter(parent_directory, dataset_name)
 
     try:
         # Change source directory for evaluating relative paths
@@ -625,3 +626,11 @@ def convert_colorizer_data(
     finally:
         # Restore working directory
         os.chdir(original_cwd)
+
+
+@deprecated(
+    "convert_colorizer_data is deprecated and will be removed in the next major release. Please use convert_tfe_data instead."
+)
+@wraps(convert_tfe_data)
+def convert_colorizer_data(*args, **kwargs):
+    return convert_tfe_data(*args, **kwargs)

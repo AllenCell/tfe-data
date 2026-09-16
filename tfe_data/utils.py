@@ -22,7 +22,7 @@ from tfe_data.types import (
     DATETIME_FORMAT,
     CollectionManifest,
     CollectionMetadata,
-    ColorizerMetadata,
+    DatasetMetadata,
     FeatureInfo,
     FeatureType,
 )
@@ -212,7 +212,7 @@ def remap_segmented_image(
 
 
 def update_metadata(
-    metadata: Optional[Union[CollectionMetadata, ColorizerMetadata]],
+    metadata: Optional[Union[CollectionMetadata, DatasetMetadata]],
     *,
     default_name: Optional[str] = None,
 ):
@@ -225,7 +225,7 @@ def update_metadata(
     - name: Sets name if none exists and a `default_name` argument was provided.
 
     Args:
-        metadata (CollectionMetadata | ColorizerMetadata): The metadata object to update.
+        metadata (CollectionMetadata | DatasetMetadata): The metadata object to update.
         default_name (str): The name of the collection or dataset to use if the metadata has none.
     """
     current_time = datetime.now(timezone.utc).strftime(DATETIME_FORMAT)
