@@ -74,9 +74,9 @@ jobs:
       # unintended access to the token.
       - name: Push changes and new tag
         run: |
-          git config http.extraheader "Authorization: Basic $(echo -n x-access-token:${GH_TOKEN} | base64)"
+          git config http.extraheader "Authorization: Basic $(echo -n x-access-token:${GH_TOKEN} | base64 -w 0)"
           git push origin ${DEFAULT_BRANCH}
-          git push origin --tag ${VERSION_TAG}
+          git push origin ${VERSION_TAG}
           git config --unset-all http.extraheader
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
