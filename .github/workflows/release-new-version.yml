@@ -64,6 +64,10 @@ jobs:
         env:
           BUMP_TYPE: ${{ inputs.increment }}
 
+      - name: Get the new tag
+        id: get-tag
+        run: echo "VERSION_TAG=$(git describe --tags --abbrev=0)" >> "$GITHUB_OUTPUT"
+
       # The checkout action normally sets the git access token (via
       # persist-credentials), but this can be unsafe! We explicitly set the
       # token in the authorization header here, so that other steps don't have
@@ -72,15 +76,12 @@ jobs:
         run: |
           git config http.extraheader "Authorization: Basic $(echo -n x-access-token:${GH_TOKEN} | base64)"
           git push origin ${DEFAULT_BRANCH}
-          git push origin --tags
+          git push origin --tag ${VERSION_TAG}
           git config --unset-all http.extraheader
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
-
-      - name: Get the new tag
-        id: get-tag
-        run: echo "VERSION_TAG=$(git describe --tags --abbrev=0)" >> "$GITHUB_OUTPUT"
+          VERSION_TAG: ${{ steps.get-tag.outputs.VERSION_TAG }}
 
   create-draft-release:
     if: ${{ github.ref_name == github.event.repository.default_branch }}
