@@ -16,10 +16,10 @@ If using these example scripts, you'll need to run these commands in an environm
 
 ```cmd
 # pip
-pip install git+https://github.com/AllenCell/tfe-data.git@v1.7.1
+pip install git+https://github.com/AllenCell/tfe-data.git@v2.0.0
 
 # requirements.txt
-tfe_data @ git+https://github.com/AllenCell/tfe-data.git@v1.7.1
+tfe_data @ git+https://github.com/AllenCell/tfe-data.git@v2.0.0
 ```
 
 To install a different version, replace the end of the URL with a specific version or branch, like `@vX.X.X` or `@{branch-name}`.
