@@ -1,2 +1,2 @@
 pandas
-tfe_data @ git+https://github.com/AllenCell/tfe-data.git@v1.7.1
+tfe_data @ git+https://github.com/AllenCell/tfe-data.git@v2.0.0
